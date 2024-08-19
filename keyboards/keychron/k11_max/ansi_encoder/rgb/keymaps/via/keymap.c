@@ -17,6 +17,7 @@
 #include QMK_KEYBOARD_H
 #include "keychron_common.h"
 #include "secrets.h"
+#include "config.h"
 
 enum layers{
 	MAC_BASE,
@@ -31,9 +32,11 @@ enum {
     TD_TEL,
     TD_ADR,
     TD_NAME,
+    TD_CRD,
+    TD_LOG,
 };
 
-void send_email(qk_tap_dance_state_t *state, void *user_data) {
+void send_email(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1) {
         SEND_STRING(PRIVATE_EMAIL);
     } else if (state->count == 2) {
@@ -41,7 +44,7 @@ void send_email(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void send_tel(qk_tap_dance_state_t *state, void *user_data) {
+void send_tel(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1) {
         SEND_STRING(TEL_WITH_PREFIX);
     } else if (state->count == 2) {
@@ -49,7 +52,7 @@ void send_tel(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void send_address(qk_tap_dance_state_t *state, void *user_data) {
+void send_address(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1) {    
         SEND_STRING(ADDRESS);
     } else if (state->count == 2) {    
@@ -57,7 +60,7 @@ void send_address(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void send_name(qk_tap_dance_state_t *state, void *user_data) {
+void send_name(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1) {    
         SEND_STRING(FULL_NAME);
     } else if (state->count == 2) {    
@@ -67,11 +70,33 @@ void send_name(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-qk_tap_dance_action_t tap_dance_actions[] = {
+void send_test_card(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {    
+        SEND_STRING("4242 4242 4242 4242");
+    } else if (state->count == 2) {
+        SEND_STRING("04/42");
+    } else if (state->count == 3) {
+        SEND_STRING("424");
+    }
+}
+
+void send_console_log(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {    
+        SEND_STRING("console.log()");
+        // tap_code(KC_LEFT);
+    } else if (state->count == 2) {
+        SEND_STRING("console.error()");
+        // tap_code(KC_LEFT);
+    }
+}
+
+tap_dance_action_t tap_dance_actions[] = {
     [TD_MAIL] = ACTION_TAP_DANCE_FN(send_email),
     [TD_TEL] = ACTION_TAP_DANCE_FN(send_tel),
     [TD_ADR] = ACTION_TAP_DANCE_FN(send_address),
     [TD_NAME] = ACTION_TAP_DANCE_FN(send_name),
+    [TD_CRD] = ACTION_TAP_DANCE_FN(send_test_card),
+    [TD_LOG] = ACTION_TAP_DANCE_FN(send_console_log),
 };
 
 // Left-hand home row mods
@@ -96,7 +121,6 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 #define CTL_5 RCTL_T(KC_P5)
 #define ALT_6 LALT_T(KC_P6)
 #define GUI_PLS RGUI_T(KC_PPLS)
-
 	
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -105,7 +129,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,	   KC_W,	 KC_E,	  KC_R,    KC_T,	KC_Y,	  KC_U,    KC_I,	KC_O,	 KC_P,	   KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_DEL,
         KC_CAPS, KC_A,	   KC_S,	 KC_D,	  KC_F,    KC_G,              KC_H,    KC_J,	KC_K,	 KC_L,	   KC_SCLN,  KC_QUOT,  KC_ENT,           KC_HOME,
         KC_LSFT,           KC_Z,	 KC_X,	  KC_C,    KC_V,	KC_B,	  KC_B,    KC_N,	KC_M,	 KC_COMM,  KC_DOT,	 KC_SLSH,  KC_RSFT, KC_UP,
-        KC_LCTL, KC_LOPTN, KC_LCMMD,          LT(FN3, KC_SPC),  MO(FN1),  MO(FN2),         KC_SPC,             KC_RCMMD,           KC_LEFT, KC_DOWN, KC_RGHT),
+        KC_LCTL, KC_LOPTN, KC_LCMMD,          LT(FN3, KC_SPC),  MO(FN1),  MO(FN2),          KC_SPC,             KC_RCMMD,           KC_LEFT, KC_DOWN, KC_RGHT),
 
     [WIN_BASE] = LAYOUT_69_ansi(
         KC_ESC,  KC_1,	   KC_2,	 KC_3,	  KC_4,    KC_5,	KC_6,	  KC_7,    KC_8,	KC_9,	 KC_0,	   KC_MINS,  KC_EQL,   KC_BSPC,          KC_MUTE,
@@ -129,11 +153,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______,  _______,           _______,          _______,  _______,          _______,           _______,            _______, KC_PGDN, _______),
         
     [FN3] = LAYOUT_69_ansi(
-        _______, _______, _______,    _______,     _______,     _______, _______, _______, _______,    _______, _______, _______, _______, _______,          _______,
-        _______, _______, _______,    _______,     _______,     _______, _______, _______, _______,    _______, _______, _______, _______, _______,          _______,
-        _______, _______, TD(TD_ADR), TD(TD_NAME), TD(TD_MAIL), _______,          _______, TD(TD_TEL), _______, _______, _______, _______, _______,          _______,
-        _______,          _______,    _______,     _______,     _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-        _______, _______, _______,                 _______,              _______, _______,             _______,          _______,          _______, _______, _______)
+        _______, _______, _______,    _______,     _______,       _______, _______, _______, _______,    _______,    _______, _______, _______, _______,          _______,
+        _______, _______, _______,    _______,     _______,       _______, _______, _______, _______,    _______,    _______, _______, _______, _______,          _______,
+        _______, TD(TD_ADR), TD(TD_NAME), TD(TD_MAIL), TD(TD_LOG), _______,          _______, TD(TD_TEL), TD(TD_CRD), _______, _______, _______, _______,          _______,
+        _______,          _______,    _______,     _______,       _______, _______, _______, _______,    _______,    _______, _______, _______, _______, _______,
+        _______, _______, _______,                 _______,                _______, _______,             _______,             _______,          _______, _______, _______)
         
     // [EMPTY] = LAYOUT_69_ansi(
     //     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
@@ -149,6 +173,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		[WIN_BASE] = {ENCODER_CCW_CW(KC_VOLD, KC_VOLU)},
 		[FN1]      = {ENCODER_CCW_CW(RGB_VAD, RGB_VAI)},
 		[FN2]	   = {ENCODER_CCW_CW(_______, _______)},
+		[FN3]	   = {ENCODER_CCW_CW(_______, _______)},
 	};
 #endif // ENCODER_MAP_ENABLE
 

@@ -111,11 +111,6 @@ tap_dance_action_t tap_dance_actions[] = {
 #define ALT_L LALT_T(KC_L)
 #define GUI_SCLN RGUI_T(KC_SCLN)
 
-// Left-hand home row mods for FN1 layer
-#define ALT_LFT LALT_T(KC_LEFT)
-#define CTL_DWN LCTL_T(KC_DOWN)
-#define SFT_RGT LSFT_T(KC_RIGHT)
-
 // Right-hand home row mods for FN1 layer
 #define SFT_4 RSFT_T(KC_P4)
 #define CTL_5 RCTL_T(KC_P5)
@@ -139,11 +134,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LWIN,  KC_LALT,           LT(FN3, KC_SPC),  MO(FN1),  MO(FN2),          KC_SPC,            KC_RALT,            KC_LEFT, KC_DOWN, KC_RGHT),
         
     [FN2] = LAYOUT_69_ansi(
-        KC_TILD, KC_F1,    KC_F2,	 KC_F3,   KC_F4,   KC_F5,	KC_F6,	  KC_F7,   KC_F8,	KC_F9,	 KC_F10,   KC_F11,	 KC_F12,   _______,          _______,
-        _______, _______,  KC_HOME,  KC_UP,   KC_END,  _______, KC_NUM,   KC_P7,   KC_P8,   KC_P9,   KC_SLSH,  KC_ASTR,  KC_PMNS,  _______,          _______,
-        _______, _______,  ALT_LFT,  CTL_DWN, SFT_RGT, _______,           _______, SFT_4,   CTL_5,   ALT_6,    GUI_PLS,  _______,  _______,          _______,
-        _______,           _______,  _______, _______, _______, _______,  _______, _______, KC_P1,   KC_P2,    KC_P3,    KC_PEQL,  _______, _______,
-        _______, _______,  _______,           _______,          _______,  _______,          KC_P0,             KC_PDOT,            _______, _______, _______),
+        KC_TILD, KC_F1,    KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,	  KC_F9,   KC_F10,   KC_F11,   KC_F12,   _______,          _______,
+        _______, _______,  KC_PGUP, KC_UP,   _______, _______, KC_NUM,  KC_P7,   KC_P8,   KC_P9,   KC_SLSH,  KC_ASTR,  KC_PMNS,  _______,          _______,
+        _______, KC_HOME,  KC_LEFT, KC_DOWN, KC_RGHT, KC_END,           KC_BSPC, SFT_4,   CTL_5,   ALT_6,    GUI_PLS,  KC_DEL,   _______,          _______,
+        _______,           KC_PGDN, _______, _______, _______, _______, _______, _______, KC_P1,   KC_P2,    KC_P3,    KC_PEQL,  _______, _______,
+        _______, _______,  _______,          _______,          _______, _______,          KC_P0,             KC_PDOT,            _______, _______, _______),
 
     [FN1] = LAYOUT_69_ansi(
         KC_GRV,  KC_BRID,  KC_BRIU,  KC_TASK, KC_FILE, RGB_VAD, RGB_VAI,  KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,          RGB_TOG,

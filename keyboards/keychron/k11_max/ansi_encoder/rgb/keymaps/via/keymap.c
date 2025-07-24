@@ -42,6 +42,7 @@ enum custom_keycodes {
   LLOCK = SAFE_RANGE,
   CTRL_GRV = SAFE_RANGE,
   CTRL_SHIFT_GRV,
+  MD_CODEBLOCK,
 };
 
 void send_email(tap_dance_state_t *state, void *user_data) {
@@ -169,7 +170,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______,  _______,          _______,          LLOCK,   _______,          KC_P0,             KC_PDOT,            _______, _______, _______),
 
     [FN1] = LAYOUT_69_ansi(
-        KC_GRV,  KC_BRID,  KC_BRIU,  KC_TASK, KC_FILE, RGB_VAD, RGB_VAI,  KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,          RGB_TOG,
+        MD_CODEBLOCK,  KC_BRID,  KC_BRIU,  KC_TASK, KC_FILE, RGB_VAD, RGB_VAI,  KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,          RGB_TOG,
         _______, BT_HST1,  BT_HST2,  BT_HST3, P2P4G,   BAT_LVL, _______,  _______, _______, _______, _______,  _______,	 _______,  _______,          KC_INS,
         RGB_TOG, RGB_MOD,  RGB_VAI,  RGB_HUI, RGB_SAI, RGB_SPI,           _______, TD(TD_J),_______, _______,  _______,  _______,  _______,          KC_END,
         _______,           RGB_RMOD, RGB_VAD, RGB_HUD, RGB_SAD, RGB_SPD,  _______, NK_TOGG, _______, _______,  _______,  _______,  _______, KC_PGUP,
@@ -202,12 +203,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // clang-format on
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    static uint16_t md_codeblock_timer;
+    
     if (!process_layer_lock(keycode, record, LLOCK)) { 
         return false; 
     }
     
     if (!process_record_keychron_common(keycode, record)) { 
-        return false; 
+        return false;
+    }
+    
+    switch (keycode) {
+        case MD_CODEBLOCK:  
+            if (record->event.pressed) {
+                md_codeblock_timer = timer_read();
+            } else {
+                if (timer_elapsed(md_codeblock_timer) > TAPPING_TERM) {
+                    // Hold: output markdown code block
+                    SEND_STRING("```\n\n```");
+                    tap_code(KC_UP);
+                } else {
+                    // Tap: output grave accent
+                    tap_code(KC_GRV);
+                }
+            }
+
+            return false;
     }
     
     return true;
